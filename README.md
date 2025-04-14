@@ -1,2 +1,2 @@
 # JobScout
-Job listing, scraping application. 
+Job listing, scraping application. ie LinkedIn & Indeed
