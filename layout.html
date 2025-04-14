@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Finder</title>
+</head>
+<body>
+    <header>
+        <h1>Job Finder</h1>
+        <form action="/search" method="POST">
+            <input type="text" name="job_title" placeholder="Enter job title" required>
+            <button type="submit">Search</button>
+        </form>
+    </header>
+    <hr>
+    {% block content %}{% endblock %}
+</body>
+</html>
