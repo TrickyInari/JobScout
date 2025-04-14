@@ -1,0 +1,17 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+{% if job_listings %}
+    <ul>
+        {% for job in job_listings %}
+            <li>
+                <strong>{{ job.title }}</strong><br>
+                Company: {{ job.company }}<br>
+                Location: {{ job.location }}
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No job listings found.</p>
+{% endif %}
+{% endblock %}
