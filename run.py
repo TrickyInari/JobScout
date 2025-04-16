@@ -5,4 +5,4 @@ app = create_app()
 
 if __name__ == '__main__':
     # Running the application on the specified IP at port 443 (not secure without SSL)
-    app.run(host='40.200.50.16', port=443, debug=True)  # For development (not secure)
+    app.run(host='0.0.0.0', port=443, debug=True)  # For development (not secure)
