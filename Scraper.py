@@ -8,7 +8,6 @@ def scrape_jobs(job_title):
     job_listings = []
     
      # Define search URLs for each job site
-    
     sources = {
         "Indeed": f"https://www.indeed.com/jobs?q={job_title.replace(' ', '+')}",
         "LinkedIn": f"https://www.linkedin.com/jobs/search?keywords={job_title.replace(' ', '%20')}",
@@ -18,7 +17,6 @@ def scrape_jobs(job_title):
     }
     
     # List of User-Agents to rotate
-    
     user_agents = [
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.4044.138 Safari/537.36",
