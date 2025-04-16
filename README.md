@@ -7,20 +7,23 @@ Disclaimer: This repository uses AI in some places, sorry I'm not that kind of w
 Your file layout should be as follows. 
 
 jobscout/
-│
 ├── app/
-│   ├── __init__.py
-│   ├── routes.py
-│   ├── scraper.py
-│   ├── models.py
+│   ├── __init__.py           # Flask app factory and configuration
+│   ├── routes.py             # All view/routes logic
+│   ├── scraper.py            # Web scraping logic for job sites
+│   ├── models.py             # SQLAlchemy database models
 │   ├── templates/
-│   │   ├── index.html
-│   │   └── layout.html
+│   │   ├── layout.html       # Base template
+│   │   └── index.html        # Main/search results page
 │   └── static/
 │       ├── css/
-│       │   └── styles.css  # Your CSS file should be here
-│       └── js/              # Any JavaScript files (optional)
-│
-├── venv/                     # Your virtual environment
-├── requirements.txt          # List of dependencies for the project
-└── run.py                    # Entry point for running the application
+│       │   └── styles.css    # Your CSS styles
+│       └── js/
+│           └── scripts.js    # Any JavaScript (optional)
+├── app/logs/
+│   └── app.log               # Logging output (created at runtime)
+├── migrations/               # (If using Flask-Migrate/DB migrations)
+├── venv/                     # Python virtual environment (not tracked in git)
+├── requirements.txt          # All project dependencies
+├── run.py                    # Entry point (calls create_app)
+└── README.md                 # Project overview and setup instructions
