@@ -1,56 +1,161 @@
 import requests
 from bs4 import BeautifulSoup
+import time
+import random
+from flask import current_app
 
 def scrape_jobs(job_title):
-    base_url = "https://www.examplejobsite.com"  # Replace with the actual job site
-    search_url = f"{base_url}/search?q={job_title.replace(' ', '+')}"
-    
-    response = requests.get(search_url)
-    
-    # Check for any errors in the request
-    if response.status_code != 200:
-        print("Failed to retrieve results")
-        return []
-
-    soup = BeautifulSoup(response.text, 'html.parser')
-
-    # Adjust this selector based on the actual HTML structure
-    job_cards = soup.find_all('div', class_='job-card')  # Modify as necessary
-
     job_listings = []
-    
-    for card in job_cards:
-        # Extracting elements based on the known HTML structure
-        title_elem = card.find('h2', class_='job-title')  # Adjust the class name
-        company_elem = card.find('span', class_='company')  # Adjust as necessary
-        location_elem = card.find('span', class_='location')  # Adjust as necessary
-        salary_elem = card.find('span', class_='salary')  # Adjust for salary if available
-        posting_date_elem = card.find('span', class_='posting-date')  # Adjust as necessary
-        experience_level_elem = card.find('span', class_='experience-level')  # Adjust for experience level
-        industry_elem = card.find('span', class_='industry')  # Adjust for industry
-        
-        # Extracting the URL (usually from an anchor tag within the job card)
-        url_elem = card.find('a', class_='job-link')  # Adjust as necessary for the job link
 
-        if title_elem and url_elem:  # Ensuring we found both title and link
-            job_listing = {
-                'site': base_url,  # The site from which we're scraping
-                'listing_url': base_url + url_elem['href'],  # Construct full URL
-                'title': title_elem.get_text(strip=True),  # Job title
-                'company': company_elem.get_text(strip=True) if company_elem else "N/A",  # Company name
-                'location': location_elem.get_text(strip=True) if location_elem else "N/A",  # Job location
-                'salary': salary_elem.get_text(strip=True) if salary_elem else "N/A",  # Salary info
-                'posting_date': posting_date_elem.get_text(strip=True) if posting_date_elem else "N/A",  # Posting date
-                'experience_level': experience_level_elem.get_text(strip=True) if experience_level_elem else "N/A",  # Experience level
-                'industry': industry_elem.get_text(strip=True) if industry_elem else "N/A",  # Industry
-            }
-            job_listings.append(job_listing)  # Add the job listing to the list
+    # Define search URLs for each job site
+    sources = {
+        "Indeed": f"https://www.indeed.com/jobs?q={job_title.replace(' ', '+')}",
+        "LinkedIn": f"https://www.linkedin.com/jobs/search?keywords={job_title.replace(' ', '%20')}",
+        "Glassdoor": f"https://www.glassdoor.com/Job/jobs.htm?sc.keyword={job_title.replace(' ', '%20')}",
+        "ZipRecruiter": f"https://www.ziprecruiter.com/candidate/jobs/search?search={job_title.replace(' ', '%20')}",
+        "Monster": f"https://www.monster.com/jobs/search?q={job_title.replace(' ', '+')}"
+    }
+
+    # List of User-Agents to rotate
+    user_agents = [
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/605.1.15",
+        "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:93.0) Gecko/20100101 Firefox/93.0",
+        "Mozilla/5.0 (Linux; Android 11; Pixel 5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Mobile Safari/537.36"
+    ]
+
+    # Loop through each source to scrape job listings
+    for site_name, search_url in sources.items():
+        headers = {
+            "User-Agent": random.choice(user_agents)  # Use a random User-Agent for each request
+        }
+
+        # Use requests.Session to maintain state across requests
+        session = requests.Session()
+        session.headers.update(headers)
+
+        try:
+            response = session.get(search_url)
+            
+            # Check the response status
+            if response.status_code == 200:
+                soup = BeautifulSoup(response.text, 'html.parser')
+
+                # Scraping logic for Indeed
+                if site_name == "Indeed":
+                    job_cards = soup.find_all('div', class_='job_seen_beacon')  # Adjust this selector based on Indeed's HTML structure
+                    for card in job_cards:
+                        title_elem = card.find('h2', class_='jobTitle')
+                        company_elem = card.find('span', class_='companyName')
+                        location_elem = card.find('div', class_='companyLocation')
+                        link_elem = title_elem.find('a') if title_elem else None
+                        
+                        if title_elem and link_elem:
+                            job_listing = {
+                                'site': site_name,
+                                'listing_url': "https://www.indeed.com" + link_elem['href'],
+                                'title': title_elem.get_text(strip=True),
+                                'company': company_elem.get_text(strip=True) if company_elem else "N/A",
+                                'location': location_elem.get_text(strip=True) if location_elem else "N/A",
+                                'salary': "N/A",  # Placeholder for salary
+                                'posting_date': "N/A",  # Placeholder for posting date
+                                'experience_level': "N/A",  # Placeholder
+                                'industry': "N/A"  # Placeholder
+                            }
+                            job_listings.append(job_listing)
+
+                # Scraping logic for LinkedIn
+                elif site_name == "LinkedIn":
+                    job_cards = soup.find_all('li', class_='result-card')  # Adjust this selector based on LinkedIn's HTML structure
+                    for card in job_cards:
+                        title_elem = card.find('h3', class_='result-card__title')
+                        company_elem = card.find('h4', class_='result-card__subtitle')
+                        location_elem = card.find('span', class_='job-result-card__location')
+
+                        if title_elem:
+                            job_listing = {
+                                'site': site_name,
+                                'listing_url': card.find('a')['href'],
+                                'title': title_elem.get_text(strip=True),
+                                'company': company_elem.get_text(strip=True) if company_elem else "N/A",
+                                'location': location_elem.get_text(strip=True) if location_elem else "N/A",
+                                'salary': "N/A",
+                                'posting_date': "N/A",
+                                'experience_level': "N/A",
+                                'industry': "N/A"
+                            }
+                            job_listings.append(job_listing)
+
+                # Scraping logic for Glassdoor
+                elif site_name == "Glassdoor":
+                    job_cards = soup.find_all('li', class_='react-job-listing')  # Adjust this selector based on Glassdoor's HTML
+                    for card in job_cards:
+                        title_elem = card.find('div', class_='jobHeader')
+                        company_elem = card.find('div', class_='companyName')
+                        location_elem = card.find('span', class_='loc')
+
+                        if title_elem:
+                            job_listing = {
+                                'site': site_name,
+                                'listing_url': card.find('a')['href'],
+                                'title': title_elem.get_text(strip=True),
+                                'company': company_elem.get_text(strip=True) if company_elem else "N/A",
+                                'location': location_elem.get_text(strip=True) if location_elem else "N/A",
+                                'salary': "N/A",
+                                'posting_date': "N/A",
+                                'experience_level': "N/A",
+                                'industry': "N/A"
+                            }
+                            job_listings.append(job_listing)
+
+                # Scraping logic for ZipRecruiter
+                elif site_name == "ZipRecruiter":
+                    job_cards = soup.find_all('div', class_='job_details')  # Adjust as per ZipRecruiter's actual structure
+                    for card in job_cards:
+                        title_elem = card.find('a', class_='job_link')
+                        company_elem = card.find('div', class_='job_company')
+                        location_elem = card.find('div', class_='job_location')
+
+                        if title_elem:
+                            job_listing = {
+                                'site': site_name,
+                                'listing_url': title_elem['href'],
+                                'title': title_elem.get_text(strip=True),
+                                'company': company_elem.get_text(strip=True) if company_elem else "N/A",
+                                'location': location_elem.get_text(strip=True) if location_elem else "N/A",
+                                'salary': "N/A",
+                                'posting_date': "N/A",
+                                'experience_level': "N/A",
+                                'industry': "N/A"
+                            }
+                            job_listings.append(job_listing)
+
+                # Scraping logic for Monster
+                elif site_name == "Monster":
+                    job_cards = soup.find_all('section', class_='card-content')  # Adjust according to Monster's HTML structure
+                    for card in job_cards:
+                        title_elem = card.find('h2', class_='title')
+                        company_elem = card.find('div', class_='company')
+                        location_elem = card.find('div', class_='location')
+
+                        if title_elem:
+                            job_listing = {
+                                'site': site_name,
+                                'listing_url': card.find('a')['href'],  # Assuming the URL is in the anchor tag
+                                'title': title_elem.get_text(strip=True),
+                                'company': company_elem.get_text(strip=True) if company_elem else "N/A",
+                                'location': location_elem.get_text(strip=True) if location_elem else "N/A",
+                                'salary': "N/A",
+                                'posting_date': "N/A",
+                                'experience_level': "N/A",
+                                'industry': "N/A"
+                            }
+                            job_listings.append(job_listing)
+            else:
+                current_app.logger.error(f"Failed to retrieve results from {site_name}. Status code: {response.status_code}")
+
+            time.sleep(15)  # Introduce a 15-second delay between requests to avoid being blocked
+        except Exception as e:
+            current_app.logger.error(f"Error occurred while scraping {site_name}: {str(e)}")  # Log the scraping error
 
     return job_listings
-
-# Example usage of the function
-if __name__ == "__main__":
-    job_title = "Software Engineer"  # Change to desired job title
-    listings = scrape_jobs(job_title)
-    for listing in listings:
-        print(listing)
