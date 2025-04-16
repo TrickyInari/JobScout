@@ -6,6 +6,10 @@ Disclaimer: This repository uses AI in some places, sorry I'm not that kind of w
 
 Your file layout should be as follows. 
 
+**Example "C:/Desktop/Job Scout"**
+
+![image](https://github.com/user-attachments/assets/98c4b17c-b083-4e2a-99d9-36ea06634e16)
+
 jobscout/
 ├── app/
 │   ├── __init__.py           # Flask app factory and configuration
