@@ -1,17 +1,30 @@
 {% extends 'layout.html' %}
 
 {% block content %}
+<h2>Job Listings</h2>
+
+{% if error %}
+    <div class="alert alert-warning">{{ error }}</div> <!-- Display error message if any -->
+{% endif %}
+
 {% if job_listings %}
+    <h3>Results:</h3>
     <ul>
         {% for job in job_listings %}
             <li>
-                <strong>{{ job.title }}</strong><br>
-                Company: {{ job.company }}<br>
-                Location: {{ job.location }}
+                <strong><a href="{{ job.listing_url }}" target="_blank">{{ job.title }}</a></strong><br>
+                <strong>Company:</strong> {{ job.company }}<br>
+                <strong>Location:</strong> {{ job.location }}<br>
+                <strong>Salary:</strong> {{ job.salary }}<br>
+                <strong>Posted on:</strong> {{ job.posting_date }}<br>
+                <strong>Experience Level:</strong> {{ job.experience_level }}<br>
+                <strong>Industry:</strong> {{ job.industry }}<br>
+                <strong>Source:</strong> {{ job.site }}<br>
             </li>
+            <hr>  <!-- Horizontal rule to separate individual job listings -->
         {% endfor %}
     </ul>
 {% else %}
-    <p>No job listings found.</p>
+    <p>No job listings found.</p> <!-- Message if no job listings found -->
 {% endif %}
 {% endblock %}
