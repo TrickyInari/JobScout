@@ -4,16 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job Finder</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">  <!-- Link to CSS file -->
 </head>
 <body>
     <header>
         <h1>Job Finder</h1>
-        <form action="/search" method="POST">
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('main.index') }}">Home</a></li> <!-- Link to home page -->
+            </ul>
+        </nav>
+        <form action="{{ url_for('main.index') }}" method="POST">  <!-- Form submits back to index route -->
             <input type="text" name="job_title" placeholder="Enter job title" required>
             <button type="submit">Search</button>
         </form>
     </header>
     <hr>
-    {% block content %}{% endblock %}
+    <main>
+        {% block content %}{% endblock %}  <!-- This block will be overridden in child templates -->
+    </main>
+    <footer>
+        <p>&copy; 2025 Job Finder. All rights reserved.</p>  <!-- Footer content -->
+    </footer>
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>  <!-- Optional JavaScript file -->
 </body>
 </html>
