@@ -1,0 +1,76 @@
+/* styles.css */
+
+body {
+    background-color: #75828A; /* Set the background color for the body */
+    font-family: Arial, sans-serif; /* Default font */
+    margin: 0; /* Remove default margin */
+    padding: 20px; /* General padding */
+    color: #333; /* Text color for better readability */
+}
+
+/* Header Styling */
+header {
+    background-color: #547FAB; /* Header background color */
+    color: #ffffff; /* Header text color */
+    padding: 15px 20px; /* Padding around header */
+    border-bottom: 3px solid #003D5B; /* Bottom border for definition */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+}
+
+header h1 {
+    margin: 0; /* Remove default margin from h1 */
+}
+
+nav ul {
+    list-style-type: none; /* Remove bullet points */
+    padding: 0; /* Remove padding */
+}
+
+nav ul li {
+    display: inline; /* Inline navigation items */
+    margin-right: 20px; /* Space between navigation items */
+}
+
+nav ul li a {
+    color: #ffffff; /* Color for navigation links */
+    text-decoration: none; /* Remove underlines from links */
+}
+
+nav ul li a:hover {
+    text-decoration: underline; /* Underline links on hover */
+}
+
+/* Main Content Styling */
+main {
+    background-color: #ffffff; /* Set the background of the main content */
+    padding: 20px; /* Add padding to the main content area */
+    border-radius: 5px; /* Rounded corners for a softer look */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+h2 {
+    color: #003D5B; /* Header color for job listings */
+}
+
+/* Job Listings List Styles */
+ul {
+    padding-left: 0; /* Remove padding from the unordered list */
+}
+
+li {
+    padding: 15px; /* Padding for each job listing item */
+    border-bottom: 1px solid #eaeaea; /* Bottom border for list items */
+}
+
+li:last-child {
+    border-bottom: none; /* Remove border from the last item */
+}
+
+/* Footer Styling */
+footer {
+    text-align: center; /* Center footer text */
+    margin-top: 20px; /* Margin above the footer */
+    color: #fff; /* Footer text color */
+    background-color: #547FAB; /* Match footer background color with header */
+    padding: 10px 0; /* Padding for footer */
+}
