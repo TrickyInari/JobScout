@@ -1,6 +1,9 @@
 Flask==2.3.3
-SQLAlchemy==1.4.27
 Flask-SQLAlchemy==2.5.1
+SQLAlchemy==1.4.27
 requests==2.31.0
 beautifulsoup4==4.12.2
-python-dotenv==1.0.0  # If you are using .env files for configuration
+Flask-Migrate       # if using
+Flask-WTF           # if using forms/csrf
+python-dotenv       # if using .env files for secrets/config
+
